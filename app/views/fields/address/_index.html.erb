@@ -1,0 +1,12 @@
+<%#
+# Address Index Partial
+This partial renders an address attribute
+to be displayed on a resource's index page.
+By default, the attribute is rendered as an unformatted string.
+## Local variables:
+- `field`:
+  An instance of Administrate::Field::Address.
+  A wrapper around the Address pulled from the database.
+%>
+
+<%= field.data %>
