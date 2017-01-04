@@ -1,6 +1,25 @@
 $(function () {
   var autocompleteService = new google.maps.places.AutocompleteService();
 
+  function setAddress (placesService, address, map, marker) {
+    autocompleteService.getPlacePredictions(
+      { input: address },
+      function (predictions, status) {
+        if (status != google.maps.places.PlacesServiceStatus.OK || predictions.length == 0) {
+          return;
+        }
+        placesService.getDetails(
+          { placeId: predictions[0].place_id },
+          function (place, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+              setPlace(place, map, marker);
+            }
+          }
+        );
+      }
+    );
+  }
+
   function setPlace (place, map, marker) {
     marker.setVisible(false);
 
@@ -12,12 +31,8 @@ $(function () {
     }
 
     // If the place has a geometry, then present it on a map.
-    if (place.geometry.viewport) {
-      map.fitBounds(place.geometry.viewport);
-    } else {
-      map.setCenter(place.geometry.location);
-      map.setZoom(17);  // Why 17? Because it looks good.
-    }
+    map.setCenter(place.geometry.location);
+
     marker.setIcon(/** @type {google.maps.Icon} */({
       url: place.icon,
       size: new google.maps.Size(71, 71),
@@ -31,7 +46,7 @@ $(function () {
 
   $('.address-input').each(function () {
     var input = this;
-    var map = new google.maps.Map($(input).siblings('.address-map')[0], {
+    var map = new google.maps.Map($(input).siblings('.address-input-map')[0], {
       center: { lat: <%= Administrate::Field::Address.latitude %>, lng: <%= Administrate::Field::Address.longitude %> },
       zoom: <%= Administrate::Field::Address.zoom %>
     });
@@ -54,23 +69,27 @@ $(function () {
     });
 
     if (input.value && input.value != '') {
-      autocompleteService.getPlacePredictions(
-        { input: input.value },
-        function (predictions, status) {
-          if (status != google.maps.places.PlacesServiceStatus.OK || predictions.length == 0) {
-            return;
-          }
-          placesService.getDetails(
-            { placeId: predictions[0].place_id },
-            function (place, status) {
-              if (status == google.maps.places.PlacesServiceStatus.OK) {
-                setPlace(place, map, marker);
-              }
-            }
-          );
-        }
-      );
+      setAddress(placesService, input.value, map, marker);
     }
+  });
 
+  $('.address-show-map').each(function () {
+    var map = new google.maps.Map(this, {
+      center: { lat: <%= Administrate::Field::Address.latitude %>, lng: <%= Administrate::Field::Address.longitude %> },
+      zoom: <%= Administrate::Field::Address.zoom %>
+    });
+
+    var placesService = new google.maps.places.PlacesService(map);
+
+    var marker = new google.maps.Marker({
+      map: map,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+
+    var address = $(this).data('address');
+    if (address && address != '') {
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push($(this).siblings('.address-label')[0]);
+      setAddress(placesService, address, map, marker);
+    }
   });
 });

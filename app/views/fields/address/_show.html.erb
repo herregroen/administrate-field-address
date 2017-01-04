@@ -3,11 +3,12 @@
 # Address Show Partial
 This partial renders an address attribute,
 to be displayed on a resource's show page.
-By default, the attribute is rendered as an unformatted string.
+By default, the attribute is rendered as a Google map.
 ## Local variables:
 - `field`:
   An instance of Administrate::Field::Address.
   A wrapper around the Address pulled from the database.
 %>
 
-<%= field.data %>
+<div class="address-label"><%= field.data %></div>
+<div class="address-show-map" data-address="<%= field.data %>"></div>

@@ -9,15 +9,19 @@ module Administrate
       @api_key   = false
       @latitude  = false
       @longitude = false
-      @zoom      = 8
+      @zoom      = 12
 
       class << self
+        def javascript
+          "https://maps.googleapis.com/maps/api/js?key=#{@api_key}&libraries=places"
+        end
+
         def api_key= val
           if @api_key
             raise "Administrate::Field::Address.api_key has already been set, it should only be set once."
           else
             @api_key = val
-            Administrate::Engine.add_javascript "https://maps.googleapis.com/maps/api/js?key=#{@api_key}&libraries=places"
+            Administrate::Engine.add_javascript javascript
           end
         end
         def api_key
