@@ -10,5 +10,7 @@ By default, the attribute is rendered as a Google map.
   A wrapper around the Address pulled from the database.
 %>
 
-<div class="address-label"><%= field.data %></div>
-<div class="address-show-map" data-address="<%= field.data %>"></div>
+<%- unless field.data.empty? %>
+  <div class="address-label"><%= field.data %></div>
+  <div class="address-show-map" data-address="<%= field.data %>"></div>
+<%- end %>
