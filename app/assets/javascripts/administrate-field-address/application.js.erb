@@ -1,4 +1,4 @@
-document.addEventListener('turbolinks:load', function () {
+var init = function () {
   var autocompleteService = new google.maps.places.AutocompleteService();
 
   function setAddress (placesService, address, map, marker) {
@@ -92,4 +92,10 @@ document.addEventListener('turbolinks:load', function () {
       setAddress(placesService, address, map, marker);
     }
   });
-});
+};
+
+if (window['TurboLinks']) {
+  document.addEventListener('turbolinks:load', init);
+} else {
+  $(init);
+}
