@@ -1,4 +1,4 @@
-$(function () {
+document.addEventListener('turbolinks:load', function () {
   var autocompleteService = new google.maps.places.AutocompleteService();
 
   function setAddress (placesService, address, map, marker) {
